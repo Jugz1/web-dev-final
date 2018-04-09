@@ -1,2 +1,1 @@
-# web-dev-final
-my final project for web dev class
+This is my final for web-dev, it will be a small game you play in browser
