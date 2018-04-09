@@ -21,9 +21,10 @@ h1{
 #game{
 	margin: auto;
 	width: 800px;
-	height: 800px;
+	height: 600px;
 	border: 3px solid black;
 	overflow: hidden;
+	position: relative;
 }
 #rightbar{
 	float: right;
@@ -38,4 +39,59 @@ h1{
 	height: 80%;
 	overflow: hidden;
 	border: 1px solid black;
+}
+#grid{
+	margin: auto;
+	width: 300px;
+	height: 300px;
+	overflow: hidden;
+	position: relative;
+	margin-top: 150px;
+}
+.blank{
+	width: 57px;
+	height: 57px;
+	float: left;
+	background-color: lightgrey;
+	border: 2px black;
+	position: absolute;
+}
+.wood{
+	width: 57px;
+	height: 57px;
+	float: left;
+	background-color: brown;
+	border: 2px black;
+	position: absolute;
+}
+.stone{
+	width: 57px;
+	height: 57px;
+	float: left;
+	background-color: grey;
+}
+.metal{
+	width: 57px;
+	height: 57px;
+	float: left;
+	background-color: silver;
+	border: 2px black;
+	position: absolute;
+}
+.blank:hover{
+	cursor: pointer;
+	background-color: pink;
+
+}
+.gamebutton{
+	position: absolute;
+	background-color: lightblue;
+	width: 50px;
+	height: 50px;
+	font-size: 8pt;
+	display: block;
+}
+.gamebutton:hover{
+	cursor: pointer;
+	background-color: blue;
 }
