@@ -6,7 +6,11 @@ window.onload = function(){
 	console.log("loaded");
 }
 function initGame(){
-	var game = document.getElementById("game");
+	game = document.getElementById("game");
+	con = getContext("2d");
+	setInterval(update,1000/60);
+
+
 	game.removeChild(document.getElementById("playbutton"));
 
 	//initialize grid
@@ -82,7 +86,10 @@ function initGame(){
 
 
 }
-function startGame(){
+function update(){
+	con.fillStyle = "lightgrey";
+	con.fillRect(0,0,c.width,c.height);
+	
 
 
 }
