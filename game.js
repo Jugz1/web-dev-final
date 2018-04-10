@@ -1,34 +1,40 @@
 "use strict";
 
 var selected =  1;
+var game;
+var con;
+var mouseX,mouseY;
+var grid;
+var GUI;
 window.onload = function(){
-	document.getElementById("playbutton").addEventListener("click",initGame);
 	console.log("loaded");
+	initGame();
 }
 function initGame(){
 	game = document.getElementById("game");
-	con = getContext("2d");
-	setInterval(update,1000/60);
+	game.addEventListener("mousedown",mouseDown);
+	game.addEventListener("mouseup",mouseUp);
+	game.addEventListener("mousemove",mousePos);
+	con = game.getContext("2d");
+	game.width = 700;
+	game.height = 700;
+	GUI = new gui();
 
 
-	game.removeChild(document.getElementById("playbutton"));
 
 	//initialize grid
 	//put into local game array so it cant be fked by player
-	var grid = document.createElement("div");
-	grid.id = "grid";
+	con.fillStyle = "blue";
 	for(var i = 0; i<5; i++){
+		var row;
 		for(var j = 0; j<5; j++){
-			var square = document.createElement("div");
-			square.className = "blank";
-			square.id = String(i)+String(j);
-			square.addEventListener("mouseover",sqMouseOver);
-			square.addEventListener("click",sqClick);
-			square.style.top = (60*i) + "px";
-			square.style.left = (60*j) + "px";
-			grid.append(square);
+			//grid[i][j]=;
+			con.fillRect(200+(i*60.5),150+(j*60.5),59,59);
+
 		}
 	}
+		//setInterval(update,1000/60);
+	/*
 	game.append(grid);
 	//initialize benches
 	//need to maike an array of benches, each of which is an array of objects(or null)
@@ -46,17 +52,23 @@ function initGame(){
 			slot.style.top = (33*j) + "%";
 			slot.margin = "auto";		
 		}
-	}
+	}*/
 	//initialize various buttons
-	var woodButton = document.createElement("button");
-	game.append(woodButton);
-	woodButton.className = "gamebutton";
-	woodButton.addEventListener("click",select);
-	woodButton.value = 1;
-	woodButton.style.bottom = "10px";
-	woodButton.style.right = "10px";
-	woodButton.innerHTML = "Wood";
+	var woodButton = new button(game.width-60,game.height-60,50,50,"orange",
+		"Wood",select,1);
+	woodButton.update();
+	GUI.addElement(woodButton);
 
+	var stoneButton = new button(game.width-120,game.height-60,50,50,"darkgrey",
+		"Stone",select,2);
+	stoneButton.update();
+	GUI.addElement(stoneButton);
+
+	var metalButton = new button(game.width-180,game.height-60,50,50,"#808080",
+		"Metal",select,3);
+	metalButton.update();
+	GUI.addElement(metalButton);
+ /*
 	var stoneButton = document.createElement("button");
 	game.append(stoneButton);
 	stoneButton.className = "gamebutton";
@@ -83,24 +95,41 @@ function initGame(){
 	pauseButton.style.left = "10px";
 	pauseButton.innerHTML = "Pause";
 
+	*/
+
 
 
 }
 function update(){
 	con.fillStyle = "lightgrey";
-	con.fillRect(0,0,c.width,c.height);
+	con.fillRect(0,0,game.width,game.height);
 	
 
+
+}
+function render(obj){
 
 }
 function loadScreen(){
 
 }
 function enemy(firedelay, positionx, positiony,state,d){
-	if(state)
 
 }
-function sqMouseOver(){
+function mouseDown(){
+	mouseDown = true;
+
+}
+function mouseUp(){
+	if(mouseDown)
+		console.log(mouseX,mouseY)
+		GUI.isClicked(mouseX,mouseY);
+	mouseDown = false;
+
+}
+function mousePos(e){
+	mouseX = e.pageX - game.offsetLeft;
+	mouseY = e.pageY - game.offsetTop;
 
 }
 function sqClick(){
@@ -114,9 +143,52 @@ function sqClick(){
 		}
 	}
 }
-function select(){
-	selected=this.value;
+function select(val){
+	console.log(val + "set as material");
+	selected=val;
+}
+function gui(){
+	this.elements = [];
+	this.len = 0;
+	this.addElement = function(element){
+		this.elements.push(element);
+		this.len+=1;
+	}
+	this.isClicked = function(mx,my){
+		for(var i=0; i<this.len; i++){
+			this.elements[i].isClicked(mx,my);
+		}
+	}
+
+
+
 }
 function pause(){
 
+}
+function button(x,y,width,height,color,text,func,val){
+	this.width = width;
+	this.height = height;
+	this.x = x;
+	this.y = y;
+	this.val = val || null;
+	this.update = function(){
+		con.fillStyle = color;
+		con.fillRect(this.x,this.y,this.width,this.height);
+		con.font = "12pt Arial";
+		con.fillStyle = "black";
+		con.fillText(text,x+5,y+(this.height/2));
+	}
+	this.isClicked = function(mouseX,mouseY){
+		con.beginPath();
+		con.moveTo(x,y);
+		con.lineTo(x+width,y);
+		con.lineTo(x+width,y+height);
+		con.lineTo(x,y+width);
+		con.closePath();
+		if(con.isPointInPath(mouseX,mouseY)){
+			func(val);
+		}
+
+	}
 }

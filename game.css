@@ -20,8 +20,8 @@ h1{
 }
 #game{
 	margin: auto;
-	width: 800px;
-	height: 600px;
+	width: 700px;
+	height: 700px;
 	border: 2px solid black;
 	display: block;
 }
