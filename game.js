@@ -8,6 +8,9 @@ window.onload = function(){
 function initGame(){
 	var game = document.getElementById("game");
 	game.removeChild(document.getElementById("playbutton"));
+
+	//initialize grid
+	//put into local game array so it cant be fked by player
 	var grid = document.createElement("div");
 	grid.id = "grid";
 	for(var i = 0; i<5; i++){
@@ -23,10 +26,24 @@ function initGame(){
 		}
 	}
 	game.append(grid);
+	//initialize benches
+	//need to maike an array of benches, each of which is an array of objects(or null)
 	for(var i = 0; i < 4; i++){
 		var bench = document.createElement("div");
 		game.append(bench);
+		bench.className = "bench";
+		bench.style.bottom = (Math.floor(Math.sin(i*Math.PI/2))*200 + 300) + "px";
+		bench.style.left = (Math.floor(Math.cos(i*Math.PI/2))*200 + 400) + "px"
+		console.log(Math.floor(Math.sin(i*Math.PI/2)), Math.floor(Math.cos(i*Math.PI/2)));
+		for(var j = 0; j < 3; j++){
+			var slot = document.createElement("div");
+			bench.append(slot);
+			slot.className = "slot";
+			slot.style.top = (33*j) + "%";
+			slot.margin = "auto";		
+		}
 	}
+	//initialize various buttons
 	var woodButton = document.createElement("button");
 	game.append(woodButton);
 	woodButton.className = "gamebutton";
@@ -54,10 +71,13 @@ function initGame(){
 	metalButton.style.right = "130px";
 	metalButton.innerHTML = "Metal";
 
-	/*var stoneButton = document.createElement("button");
-	stoneButton.addEventListener("click",select);
-	stoneButton.value = 2;*/
-
+	var pauseButton = document.createElement("button");
+	game.append(pauseButton);
+	pauseButton.className = "gamebutton";
+	pauseButton.addEventListener("click",pause);
+	pauseButton.style.bottom = "10px";
+	pauseButton.style.left = "10px";
+	pauseButton.innerHTML = "Pause";
 
 
 
@@ -69,7 +89,8 @@ function startGame(){
 function loadScreen(){
 
 }
-function addEnemy(){
+function enemy(firedelay, positionx, positiony,state,d){
+	if(state)
 
 }
 function sqMouseOver(){
@@ -88,4 +109,7 @@ function sqClick(){
 }
 function select(){
 	selected=this.value;
+}
+function pause(){
+
 }

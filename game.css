@@ -41,12 +41,14 @@ h1{
 	border: 1px solid black;
 }
 #grid{
-	margin: auto;
+	margin-left: 250px;
+	margin-right: 250px;
+	margin-top: 150px;
+	margin-bottom: 150px;
 	width: 300px;
 	height: 300px;
 	overflow: hidden;
 	position: relative;
-	margin-top: 150px;
 }
 .blank{
 	width: 57px;
@@ -68,13 +70,15 @@ h1{
 	width: 57px;
 	height: 57px;
 	float: left;
-	background-color: grey;
+	background-color: orange;
+	border: 2px black;
+	position: absolute;
 }
 .metal{
 	width: 57px;
 	height: 57px;
 	float: left;
-	background-color: silver;
+	background-color: #808080;
 	border: 2px black;
 	position: absolute;
 }
@@ -94,4 +98,24 @@ h1{
 .gamebutton:hover{
 	cursor: pointer;
 	background-color: blue;
+}
+.bench{
+	position: absolute;
+	background-color: lightblue;
+	width: 50px;
+	height: 50px;
+	font-size: 8pt;
+	display: block;
+	overflow: hidden;
+
+}
+
+.slot{
+	position: absolute;
+	background-color: lightblue;
+	width: 50px;
+	height: 50px;
+	font-size: 8pt;
+	display: block;
+
 }
