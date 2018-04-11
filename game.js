@@ -85,12 +85,6 @@ function update(){
 
 
 }
-function render(obj){
-
-}
-function loadScreen(){
-
-}
 function enemy(firedelay, positionx, positiony,state,d){
 
 }
@@ -148,13 +142,14 @@ function square(x,y,width,mat){
 	this.x = x;
 	this.y = y;
 	this.width = width;
-	this.material = mat || 0;
+	this.material = mat;
 	this.hp = this.material;
-	this.color = materialColors[0];
+	this.color = materialColors[this.material];
+
 	this.setMaterial = function(mat){
 		this.material = mat;
-		this.hp = material;
-		this.setColor();
+		this.hp = this.material;
+		this.color = materialColors[this.material];
 	}
 	this.damage = function(dam){
 		this.hp-=dam;
@@ -166,11 +161,6 @@ function square(x,y,width,mat){
 		con.fillStyle = this.color;
 		con.fillRect(this.x,this.y,this.width,this.width);
 	}
-	this.setColor = function(color){
-		this.color = color || materialColors[materialColors];
-
-
-	}
 }
 function grid(x,y,sqwidth,rows,cols,gap){
 	this.x = x;
@@ -180,20 +170,20 @@ function grid(x,y,sqwidth,rows,cols,gap){
 	this.matrix = [];
 	this.mid = [Math.floor(cols/2), Math.floor(rows/2)];
 	this.path={
-		points:[{x:this.x,y:this.y},
-				{x:this.x+((this.width+this.gap)*this.rows),y:this.y},
-				{x:this.x+((this.width+this.gap)*this.rows),y:this.y+((this.width+this.gap)*this.cols)},
-				{x:this.x,y:this.y+(this.width+this.gap)*this.cols}]
+		points:[{x:x,y:y},
+				{x:x+(sqwidth+this.gap)*rows,y:y},
+				{x:x+(sqwidth+this.gap)*rows,y:y+(sqwidth+this.gap)*cols},
+				{x:x,y:y+(sqwidth+this.gap)*cols}]
 	};
 	this.initGrid = function(){
 		this.matrix = [];
 		for(var i = 0; i<rows; i++){
 				var row = [];
-				var mat = 0;
 				for(var k = 0; k<cols; k++){
+					var mat = 0;
 					var p = this.x+(i*(this.width+this.gap));
 					var q = this.y+(k*(this.width+this.gap));
-					if(k == this.mid[0] && i == this.mid[i]){
+					if(k == this.mid[0] && i == this.mid[1]){
 						mat = 4;
 					}
 				row.push(new square(p,q,sqwidth,mat));
@@ -217,8 +207,11 @@ function grid(x,y,sqwidth,rows,cols,gap){
 	this.isClicked = function(mx,my){
 		sketch(this.path);
 		if(con.isPointInPath(mx,my)){
-			console.log("clicked");
-			console.log(this.translate(mx,my))
+			var i = this.translate(mx,my);
+			var sq = this.matrix[i[0]][i[1]];
+			if(sq.material == 0){
+				sq.setMaterial(selected);
+			}
 		}
 	}
 }
