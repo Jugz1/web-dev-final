@@ -4,8 +4,9 @@ var selected =  1;
 var game;
 var con;
 var mouseX,mouseY;
-var grid;
+var GRID;
 var GUI;
+var materialColors = ["blue","brown","orange","silver","red"];
 window.onload = function(){
 	console.log("loaded");
 	initGame();
@@ -18,22 +19,20 @@ function initGame(){
 	con = game.getContext("2d");
 	game.width = 700;
 	game.height = 700;
+
 	GUI = new gui();
+	GUI.addElement(new button(game.width-60,game.height-60,50,50,"orange",
+		"Wood",select,1));
+	GUI.addElement(new button(game.width-120,game.height-60,50,50,"darkgrey",
+		"Stone",select,2));
+	GUI.addElement(new button(game.width-180,game.height-60,50,50,"#808080",
+		"Metal",select,3));
+
+	GRID = new grid(200,150,60,5,5);
+	setInterval(update,1000/60);
 
 
 
-	//initialize grid
-	//put into local game array so it cant be fked by player
-	con.fillStyle = "blue";
-	for(var i = 0; i<5; i++){
-		var row;
-		for(var j = 0; j<5; j++){
-			//grid[i][j]=;
-			con.fillRect(200+(i*60.5),150+(j*60.5),59,59);
-
-		}
-	}
-		//setInterval(update,1000/60);
 	/*
 	game.append(grid);
 	//initialize benches
@@ -54,39 +53,8 @@ function initGame(){
 		}
 	}*/
 	//initialize various buttons
-	var woodButton = new button(game.width-60,game.height-60,50,50,"orange",
-		"Wood",select,1);
-	woodButton.update();
-	GUI.addElement(woodButton);
 
-	var stoneButton = new button(game.width-120,game.height-60,50,50,"darkgrey",
-		"Stone",select,2);
-	stoneButton.update();
-	GUI.addElement(stoneButton);
-
-	var metalButton = new button(game.width-180,game.height-60,50,50,"#808080",
-		"Metal",select,3);
-	metalButton.update();
-	GUI.addElement(metalButton);
  /*
-	var stoneButton = document.createElement("button");
-	game.append(stoneButton);
-	stoneButton.className = "gamebutton";
-	stoneButton.addEventListener("click",select);
-	stoneButton.value = 2;
-	stoneButton.style.bottom = "10px";
-	stoneButton.style.right = "70px";
-	stoneButton.innerHTML = "Stone";
-
-	var metalButton = document.createElement("button");
-	game.append(metalButton);
-	metalButton.className = "gamebutton";
-	metalButton.addEventListener("click",select);
-	metalButton.value = 3;
-	metalButton.style.bottom = "10px";
-	metalButton.style.right = "130px";
-	metalButton.innerHTML = "Metal";
-
 	var pauseButton = document.createElement("button");
 	game.append(pauseButton);
 	pauseButton.className = "gamebutton";
@@ -100,9 +68,19 @@ function initGame(){
 
 
 }
+function sketch(path){
+	con.beginPath();
+	con.moveTo(path.points[0].x,path.points[0].y);
+	for(var i = 1; i<path.points.length; i++){
+		con.lineTo(path.points[i].x,path.points[i].y);
+	}
+	con.closePath();
+}
 function update(){
 	con.fillStyle = "lightgrey";
 	con.fillRect(0,0,game.width,game.height);
+	GUI.update();
+	GRID.update();
 	
 
 
@@ -124,6 +102,7 @@ function mouseUp(){
 	if(mouseDown)
 		console.log(mouseX,mouseY)
 		GUI.isClicked(mouseX,mouseY);
+		GRID.isClicked(mouseX,mouseY);
 	mouseDown = false;
 
 }
@@ -159,9 +138,89 @@ function gui(){
 			this.elements[i].isClicked(mx,my);
 		}
 	}
+	this.update = function(){
+		for(var i=0; i<this.len; i++){
+			this.elements[i].update();
+		}
+	}
+}
+function square(x,y,width,mat){
+	this.x = x;
+	this.y = y;
+	this.width = width;
+	this.material = mat || 0;
+	this.hp = this.material;
+	this.color = materialColors[0];
+	this.setMaterial = function(mat){
+		this.material = mat;
+		this.hp = material;
+		this.setColor();
+	}
+	this.damage = function(dam){
+		this.hp-=dam;
+		if(hp < 0){
+			this.setMaterial(0);
+		}
+	}
+	this.update = function(){
+		con.fillStyle = this.color;
+		con.fillRect(this.x,this.y,this.width,this.width);
+	}
+	this.setColor = function(color){
+		this.color = color || materialColors[materialColors];
 
 
+	}
+}
+function grid(x,y,sqwidth,rows,cols,gap){
+	this.x = x;
+	this.y = y;
+	this.width = sqwidth;
+	this.gap = gap || 3;
+	this.matrix = [];
+	this.mid = [Math.floor(cols/2), Math.floor(rows/2)];
+	this.path={
+		points:[{x:this.x,y:this.y},
+				{x:this.x+((this.width+this.gap)*this.rows),y:this.y},
+				{x:this.x+((this.width+this.gap)*this.rows),y:this.y+((this.width+this.gap)*this.cols)},
+				{x:this.x,y:this.y+(this.width+this.gap)*this.cols}]
+	};
+	this.initGrid = function(){
+		this.matrix = [];
+		for(var i = 0; i<rows; i++){
+				var row = [];
+				var mat = 0;
+				for(var k = 0; k<cols; k++){
+					var p = this.x+(i*(this.width+this.gap));
+					var q = this.y+(k*(this.width+this.gap));
+					if(k == this.mid[0] && i == this.mid[i]){
+						mat = 4;
+					}
+				row.push(new square(p,q,sqwidth,mat));
+				}	
+			this.matrix.push(row);
+		}
+	}
+	this.initGrid();
+	this.update = function(){
+		for(var i = 0; i<rows; i++){
+			for(var k = 0; k<cols; k++){
+				var sq = this.matrix[i][k];
+				sq.update();
+			}	
+	}
 
+	}
+	this.translate = function(mx,my){
+		return [Math.floor((mx-this.x-this.gap)/this.width),Math.floor((my-this.y-this.gap)/this.width)];
+	}
+	this.isClicked = function(mx,my){
+		sketch(this.path);
+		if(con.isPointInPath(mx,my)){
+			console.log("clicked");
+			console.log(this.translate(mx,my))
+		}
+	}
 }
 function pause(){
 
@@ -172,6 +231,9 @@ function button(x,y,width,height,color,text,func,val){
 	this.x = x;
 	this.y = y;
 	this.val = val || null;
+	this.path = {
+		points:[{x:this.x,y:this.y},{x:this.x+this.width,y:this.y},{x:this.x+this.width,y:this.y+this.height},{x:this.x,y:this.y+this.height}]
+	};
 	this.update = function(){
 		con.fillStyle = color;
 		con.fillRect(this.x,this.y,this.width,this.height);
@@ -180,12 +242,7 @@ function button(x,y,width,height,color,text,func,val){
 		con.fillText(text,x+5,y+(this.height/2));
 	}
 	this.isClicked = function(mouseX,mouseY){
-		con.beginPath();
-		con.moveTo(x,y);
-		con.lineTo(x+width,y);
-		con.lineTo(x+width,y+height);
-		con.lineTo(x,y+width);
-		con.closePath();
+		sketch(this.path);
 		if(con.isPointInPath(mouseX,mouseY)){
 			func(val);
 		}
