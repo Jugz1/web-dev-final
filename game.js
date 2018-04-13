@@ -12,6 +12,9 @@ var enemies;
 var bullets = [];
 var gamepath;
 var budget = {data:[100,50,20]};
+var playing = false;
+var playButton;
+var gameUpdate;
 //change enemies data structure to be unordered so random elements can be
 	//added and removed
 window.onload = function(){
@@ -19,6 +22,8 @@ window.onload = function(){
 	initGame();
 }
 function initGame(){
+	playButton = document.getElementById("play");
+	playButton.addEventListener("mousedown",play);
 	game = document.getElementById("game");
 	game.addEventListener("mousedown",mouseDown);
 	game.addEventListener("mouseup",mouseUp);
@@ -47,45 +52,6 @@ function initGame(){
 		jake = new enemy(p[0], p[1], .7,400,300,400,300);
 		enemies.push(jake);
 	}
-
-	setInterval(update,1000/60);
-
-
-
-	/*
-	game.append(grid);
-	//initialize benches
-	//need to maike an array of benches, each of which is an array of objects(or null)
-	for(var i = 0; i < 4; i++){
-		var bench = document.createElement("div");
-		game.append(bench);
-		bench.className = "bench";
-		bench.style.bottom = (Math.floor(Math.sin(i*Math.PI/2))*200 + 300) + "px";
-		bench.style.left = (Math.floor(Math.cos(i*Math.PI/2))*200 + 400) + "px"
-		console.log(Math.floor(Math.sin(i*Math.PI/2)), Math.floor(Math.cos(i*Math.PI/2)));
-		for(var j = 0; j < 3; j++){
-			var slot = document.createElement("div");
-			bench.append(slot);
-			slot.className = "slot";
-			slot.style.top = (33*j) + "%";
-			slot.margin = "auto";		
-		}
-	}*/
-	//initialize various buttons
-
- /*
-	var pauseButton = document.createElement("button");
-	game.append(pauseButton);
-	pauseButton.className = "gamebutton";
-	pauseButton.addEventListener("click",pause);
-	pauseButton.style.bottom = "10px";
-	pauseButton.style.left = "10px";
-	pauseButton.innerHTML = "Pause";
-
-	*/
-
-
-
 }
 function sketch(path){
 	con.beginPath();
@@ -337,8 +303,18 @@ function grid(x,y,sqwidth,rows,cols,gap,func){
 		return [x,y];
 	}
 }
+function play(){
+	if(playing == false){
+		gameUpdate = setInterval(update,1000/60);
+		playing = true;
+		playButton.innerHTML = "Pause";
+	}else
+		pause();
+}
 function pause(){
-
+	clearInterval(gameUpdate);
+	playing=false;
+	playButton.innerHTML = "Play";
 }
 function button(x,y,width,height,color,text,func,val){
 	this.width = width;
@@ -389,3 +365,4 @@ function label(x,y,width,height,valObj,valKey,tcolor,bgcolor){
 		con.fillText(String(Math.floor(value)),x-10,y+(this.height/2));
 	}
 }
+
